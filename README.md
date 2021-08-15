@@ -54,6 +54,8 @@ Things that I would add to improve this:
  * Then use the image in the card
 * A searh field to search top artists by tags, 
  * add autocomplete for top tags
+ * permit multiple tag search, but their free api does not appear to handle such cases.
+  * If it did, I would use removable chips inside the search for visual feedback to users, and an array for tracking them in code
 * Add tags to cards, allow clicking on tag to bring up top artists
 * Add "find similar" button to card to allow searching for similar artists
 * Figure out if there's a way to filter this data more efficiently
