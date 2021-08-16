@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React from 'react';
 import SearchField from './SearchField'
 import SearchResults from './SearchResults'
 

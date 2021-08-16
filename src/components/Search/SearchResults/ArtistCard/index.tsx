@@ -20,6 +20,7 @@ type ArtistInfo = {
   summary: string
   ontour: boolean
   url: string
+  tags?: string[]
 }
 // artist:
 // bio: {links: {…}, published: "11 Feb 2006, 04:03", summary: "Carissa's Wierd is an indie rock band which formed…music/Carissa%27s+Wierd\">Read more on Last.fm</a>", content: "Carissa's Wierd is an indie rock band which formed…ommons By-SA License; additional terms may apply."}
@@ -37,11 +38,11 @@ type Props = {
   artist: ArtistSchematic
 }
 const Artistcard:React.FC<Props> = ({artist}) => {
-  const [expanded, setExpanded] = React.useState<boolean>(false);
-  const [isFave, setisfave] = React.useState<boolean>(false);
-  const [info, setinfo] = React.useState<any>();
+  const [expanded, setExpanded] = useState<boolean>(false);
+  const [isFave, setisfave] = useState<boolean>(false);
+  const [info, setinfo] = useState<any>();
 
-  const {favoriteList,handleAddToFavorite} = useContext(GlobalContext)!
+  const {favoriteList,handleAddToFavorite, handleArtistSearch} = useContext(GlobalContext)!
 
   const firstUpdate = useRef(true);
 
@@ -63,7 +64,7 @@ const Artistcard:React.FC<Props> = ({artist}) => {
     setisfave(!!(favoriteList.find(art => {
       return art.name === artist.name
     })))
-  },[favoriteList])
+  },[favoriteList,artist])
 
   const handleFetchInfo = () => {
     if(info) {
@@ -79,6 +80,13 @@ const Artistcard:React.FC<Props> = ({artist}) => {
         published,
         ontour: !!parseInt(response.data.artist.ontour),
         url: response.data.artist.url
+      }
+      let tagarr:string[] = []
+      if(response.data.artist.tags.tag && response.data.artist.tags.tag.length > 0) {
+        response.data.artist.tags.tag.forEach((t:{name:string, url:string}) => {
+          tagarr.push(t.name)
+        })
+        tempObj.tags = tagarr
       }
       setinfo(tempObj)
     });
@@ -97,10 +105,22 @@ const Artistcard:React.FC<Props> = ({artist}) => {
     let action = isFave ? 'remove' : 'add'
     handleAddToFavorite(action,artist)
   }
+  const handleTagClick = (e:React.MouseEvent<HTMLElement>):void => {
+    e.stopPropagation()
+    let tag:string
+    if(e.currentTarget.dataset && e.currentTarget.dataset.string) {
+      tag = e.currentTarget.dataset.string
+      handleArtistSearch('',{tag})
+    }
+  }
+  const handleFindSimilar = (e:React.MouseEvent<HTMLElement>):void => {
+    e.stopPropagation()
+    handleArtistSearch(artist.name,{similar:true})
+  }
 
   return (
-    <Card className={scss.root} onClick={handleOnClick}>
-      <div className={scss.cardrow}>
+    <Card className={scss.root}>
+      <div className={scss.cardrow} onClick={handleOnClick}>
         <div className={scss.details}>
           <CardContent className={scss.content}>
             <Typography component="h5" variant="h5">
@@ -125,6 +145,9 @@ const Artistcard:React.FC<Props> = ({artist}) => {
           {info &&
             <>
             <Container>
+            <div className={scss.tags}>
+              <Typography onClick={handleFindSimilar} className={scss.tag} variant={'caption'}>Find Similar</Typography>
+            </div>
             {(info.content && info.content.trim() !== '' && info.summary.replace(/<a.*>.*<\/a>/g,'').trim() !== '') &&
               <>
               <Typography paragraph>Bio</Typography>
@@ -144,6 +167,11 @@ const Artistcard:React.FC<Props> = ({artist}) => {
               {info.ontour ? 'On Tour!' : 'not on tour'}
               {info.ontour && <AirportShuttleIcon className={scss.touricon} fontSize='large' />}
             </Typography>
+            <div className={scss.tags}>
+              {info.tags && info.tags.map((tag:string)=>{
+                return <Typography data-string={tag} onClick={handleTagClick} className={scss.tag} variant={'caption'}>{tag}</Typography>
+              })}
+            </div>
             </Container>
             </>
           }

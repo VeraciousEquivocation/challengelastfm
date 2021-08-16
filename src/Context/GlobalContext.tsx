@@ -12,6 +12,12 @@ interface AppContextInterface {
     handleFavoriteClick: Function;
     showFaves: boolean
     setShowFaves: Function
+    apiErr: boolean
+}
+
+type options = {
+  tag?:string
+  similar?: boolean
 }
 
 export const GlobalContext = React.createContext<AppContextInterface | null>(null);
@@ -21,6 +27,7 @@ function GlobalContextProvider(props:any) {
     const [favoriteList, setfavoritelist] = useState<ArtistSchematic[]>([]);
     const [showFaves, setShowFaves] = useState<boolean>(false)
     const [faveToArtist, setFaveToArtist] = useState<boolean>(false)
+    const [apiErr,setapierr] = useState<boolean>(false)
 
     useEffect(()=> {
         if(!faveToArtist) return
@@ -31,12 +38,30 @@ function GlobalContextProvider(props:any) {
         }
     },[faveToArtist])
 
-    const handleArtistSearch = React.useCallback((searchString:string)=>{
+    const handleArtistSearch = React.useCallback((searchString:string, options?:options)=>{
         setartistlist([])
+        setapierr(false)
         setShowFaves(false)
-        axios.get(`http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=${searchString}&api_key=[API KEY]&format=json`)
+        let method:string; 
+        
+        if(options && options.tag) 
+         method = `tag.gettopartists&tag=${options.tag}`
+        else if(options && options.similar) 
+          method = `artist.getsimilar&artist=${options.similar}`
+        else
+         method = `artist.search&artist=${searchString}`
+        
+        axios.get(`http://ws.audioscrobbler.com/2.0/?method=${method}&api_key=[API KEY]&format=json`)
         .then((response) => {
-          setartistlist(response.data.results.artistmatches.artist)
+          if(options && options.tag)
+            setartistlist(response.data.topartists.artist)
+          else if(options && options.similar)
+            setartistlist(response.data.similarartists.artist)
+          else
+            setartistlist(response.data.results.artistmatches.artist)
+        })
+        .catch(e=>{
+            setapierr(true)
         });
     },[])
     const handleAddToFavorite = React.useCallback((action:string,artistObj:ArtistSchematic)=>{
@@ -55,6 +80,8 @@ function GlobalContextProvider(props:any) {
         }
     },[favoriteList,showFaves])
     const handleShowFavorites = React.useCallback((show:boolean):void=>{
+        setapierr(false)
+
         if(show) {
             setartistlist(favoriteList)
             setShowFaves(true)
@@ -79,6 +106,7 @@ function GlobalContextProvider(props:any) {
         {
             artistList,
             favoriteList,
+            apiErr,
             handleArtistSearch,
             handleAddToFavorite,
             handleFavoriteClick,
@@ -88,6 +116,7 @@ function GlobalContextProvider(props:any) {
         [
             artistList,
             favoriteList,
+            apiErr,
             handleArtistSearch,
             handleAddToFavorite,
             handleFavoriteClick,

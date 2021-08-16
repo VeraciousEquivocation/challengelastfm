@@ -19,7 +19,7 @@ function SearchField() {
     handleArtistSearch,
     handleFavoriteClick,
     showFaves,
-    setShowFaves,
+    // setShowFaves,
     favoriteList } = useContext(GlobalContext)!
   
   const handleOnSubmit = (ev:React.ChangeEvent<HTMLInputElement>): void => {
