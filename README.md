@@ -46,20 +46,20 @@ Things that I would add to improve this:
 * Empty results feedback
 * General error checking, for stuff like the favorites etc
 * Testing, to make sure the what the user sees works
- * such as favoriting an item 
- * result cards rendering
- * the favorite cards rendering 
- * removal of a favorite while displaying favorites
+    * such as favoriting an item 
+    * result cards rendering
+    * the favorite cards rendering 
+    * removal of a favorite while displaying favorites
 * Figure out why the image provided from the API is only a grey star ( maybe paid feature )
- * Then use the image in the card
+    * Then use the image in the card
 * A searh field to search top artists by tags, 
- * add autocomplete for top tags
- * permit multiple tag search, but their free api does not appear to handle such cases.
-  * If it did, I would use removable chips inside the search for visual feedback to users, and an array for tracking them in code
+    * add autocomplete for top tags
+    * permit multiple tag search, but their free api does not appear to handle such cases.
+        * If it did, I would use removable chips inside the search for visual feedback to users, and an array for tracking them in code
 * Add tags to cards, allow clicking on tag to bring up top artists
 * Add "find similar" button to card to allow searching for similar artists
 * Figure out if there's a way to filter this data more efficiently
- * quite a few resutls end up with dual artists if they've collabed etc
- * and you get results that also state "this is not an artist", but only in the artist info 
- * Due to how this currently works, I do not grab the artist info until they expand an artist card, so i cannot filter it
- * If the result number was limited, say top 10 matches, default is 30, then I may be able to perform a loop to grab each of the 10 artist's bios, which at that point i could filter.
+    * quite a few resutls end up with dual artists if they've collabed etc
+    * and you get results that also state "this is not an artist", but only in the artist info 
+    * Due to how this currently works, I do not grab the artist info until they expand an artist card, so i cannot filter it
+    * If the result number was limited, say top 10 matches, default is 30, then I may be able to perform a loop to grab each of the 10 artist's bios, which at that point i could filter.
