@@ -21,7 +21,7 @@ function SearchResults() {
   if(!artistList && !apiErr) {
     return null
   }
-  if(artistList.length <= 0 && !firstUpdate.current) {
+  if(artistList.length <= 0 && !firstUpdate.current && !apiErr) {
     return (
       <ErrorCard open={true} zeroResults={true}/>
     )
